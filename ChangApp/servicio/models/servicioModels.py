@@ -11,7 +11,7 @@ class DiasSemana(models.TextChoices):
     
 class Servicio(models.Model):
     nombreServicio = models.CharField(max_length=100, null=False)
-    categorias = models.ManyToManyField('Categoria', related_name='servicios') #actualizar cardinalidad diagrama entidad relación
+    categorias = models.ManyToManyField('categoria.Categoria', related_name='servicios') #actualizar cardinalidad diagrama entidad relación
     descripcion = models.TextField(null=False)
     dia = models.CharField(max_length=10, choices=DiasSemana.choices,null=False, default="Lunes")
     desdeHora = models.TimeField(null=False, default="00:00")

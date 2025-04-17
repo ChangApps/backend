@@ -1,10 +1,10 @@
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import viewsets
 from ChangApp.servicio.models.proveedorServicioModels import ProveedorServicio
-from ChangApp.servicio.serializer.proveedorServicioSerializer import ProveedorServicioSerializer
+from ChangApp.servicio.serializers.proveedorServicioSerializer import ProveedorServicioSerializer
 
-
-class ProveedorServicioPorUsuarioView:
+class ProveedorServicioPorUsuarioView(viewsets.ViewSet):
     def get_proveedor_servicio_by_user(self, request, user_id=None):
         try:
             # Filtrar por el ID del proveedor (usuario)

@@ -2,7 +2,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from ChangApp.servicio.models.proveedorServicioModels import ProveedorServicio
-from ChangApp.servicio.serializer.servicioSerializer import ServicioSerializer
+from ChangApp.servicio.serializers.servicioSerializer import ServicioSerializer
 from ChangApp.usuario.models.usuarioModels import Usuario
 
 # Mixin es una clase que tiene métodos que querés “mezclar” dentro de otra clase principal.

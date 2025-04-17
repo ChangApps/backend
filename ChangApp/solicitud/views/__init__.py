@@ -1,0 +1,2 @@
+from .solicitudViewSet import SolicitudViewSet
+from .historialSolicitudesViewSet import HistorialSolicitudesViewSet

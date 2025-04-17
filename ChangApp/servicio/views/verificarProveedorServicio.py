@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from ChangApp.servicio.models.proveedorServicioModels import ProveedorServicio
 
-class VerificarProveedorServicio(APIView):
+class VerificarProveedorServicioView(APIView):
     def get(self, request, user_id, servicio_id):
         try:
             # Filtrar por usuario y servicio

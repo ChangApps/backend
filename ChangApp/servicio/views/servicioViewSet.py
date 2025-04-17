@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from ChangApp.servicio.models.servicioModels import Servicio
-from ChangApp.servicio.serializer.servicioSerializer import ServicioSerializer
+from ChangApp.servicio.serializers.servicioSerializer import ServicioSerializer
 from .servicioCreate import ServicioCreateMixin
 from .servicioUpdate import ServicioUpdateMixin
 from .servicioDestroy import ServicioDestroyMixin

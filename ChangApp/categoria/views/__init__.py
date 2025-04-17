@@ -1,0 +1,1 @@
+from .categoriaViewSet import CategoriaViewSet

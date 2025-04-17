@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from ChangApp.servicio.serializer.proveedorServicioSerializer import ProveedorServicioSerializer
-from ChangApp.solicitud.models import ProveedorServicio
+from ChangApp.servicio.serializers.proveedorServicioSerializer import ProveedorServicioSerializer
+from ChangApp.servicio.models.proveedorServicioModels import ProveedorServicio
 
 class ProveedorServicioViewSet(viewsets.ModelViewSet):
     queryset = ProveedorServicio.objects.all()
