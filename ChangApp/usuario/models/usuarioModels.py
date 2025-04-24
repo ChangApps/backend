@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.crypto import get_random_string
-# from ChangApp.usuario.models.direccionModels import Direccion
 from ChangApp.solicitud.models import EstadoServicio, Solicitud
 
 # Manager personalizado
