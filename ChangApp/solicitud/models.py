@@ -1,8 +1,5 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-# from ChangApp.usuario.models.usuarioModels import Usuario
-# from ChangApp.notificacion.models import Notificacion
-# from ChangApp.servicio.models.proveedorServicioModels import ProveedorServicio
 
 class EstadoServicio(models.TextChoices):
     INICIADO = 'I', 'Iniciado'
