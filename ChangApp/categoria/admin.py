@@ -1,6 +1,5 @@
 from django.contrib import admin
 from ChangApp.categoria.models import Categoria
-from ChangApp.servicio.models import Servicio
 
 class CategoriaAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'categoria_padre')

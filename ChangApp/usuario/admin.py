@@ -60,13 +60,3 @@ class UsuarioAdmin(admin.ModelAdmin):
          return "No hay foto"
     
     get_fotoPerfil.short_description = 'Foto de perfil'
-
-    # Definición de acciones personalizadas
-    def activar_usuarios(self, request, queryset):
-        updated = queryset.update(is_active=True)
-        self.message_user(request, f"Se activaron {updated} usuario(s).")
-    activar_usuarios.short_description = "Activar usuarios seleccionados"
-
-    def desactivar_usuarios(self, request, queryset):
-        updated = queryset.update(is_active=False)
-        self.message_user(request, f"Se desactivaron {updated} usuario(s).")
