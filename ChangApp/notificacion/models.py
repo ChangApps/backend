@@ -1,5 +1,4 @@
 from django.db import models
-# from ChangApp.usuario.models.usuarioModels import Usuario
 
 class Notificacion(models.Model):
     fechaHora = models.DateTimeField(null=True)

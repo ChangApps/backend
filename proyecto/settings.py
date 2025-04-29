@@ -20,6 +20,7 @@ ALLOWED_HOSTS = ['10.0.2.2', 'localhost', '127.0.0.1', '10.7.70.115','*']
 # Application definition
 
 INSTALLED_APPS = [
+    'admin_interface', #es para la interface del admin
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -36,7 +37,10 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework_simplejwt',
     'drf_yasg',
+    'colorfield', #es para los colores del admin
 ]
+
+X_FRAME_OPTIONS='SAMEORIGIN' #Es para la edicion del admin pero para la version 3 de django
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -114,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-es'
 
 TIME_ZONE = 'UTC'
 
@@ -154,3 +158,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'changuitasapp@gmail.com'
 EMAIL_HOST_PASSWORD = 'awst wyde zbqf iwhq'
+
+AUTH_USER_MODEL = 'usuario.Usuario'
