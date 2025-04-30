@@ -26,6 +26,7 @@ class IniciarChanguitaView(APIView):
             mensaje = f"{request.user.username} quiere contratarte para una changuita. ¿Aceptás?"
             Notificacion.objects.create(
                 usuario=proveedor,
+                notificacion_de_sistema=False,
                 mensaje=mensaje
             )
 

@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from ChangApp.notificacion.models import Notificacion
 from ChangApp.solicitud.models import Solicitud
 
 class AceptarChanguitaView(APIView):
@@ -19,6 +20,13 @@ class AceptarChanguitaView(APIView):
             # Cambiar estado a iniciado
             solicitud.estado = 'I'  # 'Iniciado'
             solicitud.save()
+
+            mensaje = f"{request.user.username} aceptó tu solicitud de changuita. Ponte en contacto para coordinar con él/ella!"
+            Notificacion.objects.create(
+                usuario=solicitud.cliente,
+                notificacion_de_sistema=False,
+                mensaje=mensaje
+            )
 
             return Response({"success": "Changuita aceptada y comenzada."}, status=200)
 

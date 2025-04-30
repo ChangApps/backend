@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from ChangApp.notificacion.models import Notificacion
 from ChangApp.solicitud.models import Solicitud
 
 class RechazarChanguitaView(APIView):
@@ -19,6 +20,13 @@ class RechazarChanguitaView(APIView):
             solicitud.proveedorServicio = None
             solicitud.estado = 'C'  # Cancelado o volvés a un estado anterior
             solicitud.save()
+
+            mensaje = f"{request.user.username} ha cancelado o rechazado tu solicitud de changuita. Si deseas, busca otro proveedor."
+            Notificacion.objects.create(
+                usuario=solicitud.cliente,
+                notificacion_de_sistema=False,
+                mensaje=mensaje
+            )
 
             return Response({"success": "Changuita rechazada."}, status=200)
 
