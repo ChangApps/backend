@@ -3,6 +3,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 class EstadoServicio(models.TextChoices):
     INICIADO = 'I', 'Iniciado'
+    PENDIENTE_ACEPTACION = 'PA', 'Pendiente de Aceptación'
     FINALIZADO = 'F', 'Finalizado'
     CANCELADO = 'C', 'Cancelado'
 
