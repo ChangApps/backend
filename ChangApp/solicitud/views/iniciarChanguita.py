@@ -1,31 +1,46 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from ChangApp.servicio.models.proveedorServicioModels import ProveedorServicio
-from ChangApp.solicitud.models import Solicitud
+from ChangApp.solicitud.models import EstadoServicio, Solicitud
 from ChangApp.notificacion.models import Notificacion
 
 class IniciarChanguitaView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Inicia una changuita: el cliente selecciona un proveedor",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['proveedor_id'],
+            properties={
+                'proveedor_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID del ProveedorServicio seleccionado'),
+            },
+        ),
+        responses={201: 'Solicitud creada correctamente'}
+    )
+
     def post(self, request):
         proveedor_id = request.data.get("proveedor_id")
-        solicitud_id = request.data.get("solicitud_id")
 
         try:
             proveedor_servicio = ProveedorServicio.objects.get(id=proveedor_id)
             proveedor = proveedor_servicio.proveedor
+            cliente = request.user
 
-            solicitud = Solicitud.objects.get(id=solicitud_id, cliente=request.user)
-
-            solicitud.proveedorServicio = proveedor_servicio
-            solicitud.estado = 'PENDIENTE_ACEPTACION'
+             # Crear la solicitud
+            solicitud = Solicitud.objects.create(
+                cliente=cliente,
+                proveedorServicio=proveedor_servicio,
+                estado=EstadoServicio.PENDIENTE_ACEPTACION
+            )
             solicitud.save()
 
             mensaje = f"{request.user.username} quiere contratarte para una changuita. ¿Aceptás?"
             Notificacion.objects.create(
-                usuario=proveedor,
+                usuario_destino=proveedor,
                 notificacion_de_sistema=False,
                 mensaje=mensaje
             )

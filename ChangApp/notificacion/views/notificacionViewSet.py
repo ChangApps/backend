@@ -15,6 +15,3 @@ class NotificacionViewSet(viewsets.ModelViewSet):
             self.perform_create(serializer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    def get_queryset(self):
-        return Notificacion.objects.filter(usuario=self.request.user).order_by('-fechahora_creada')

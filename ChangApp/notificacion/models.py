@@ -7,4 +7,4 @@ class Notificacion(models.Model):
     usuario_destino = models.ForeignKey('usuario.Usuario', on_delete=models.CASCADE, blank=True, null=True, related_name='notificaciones')
 
     def __str__(self):
-        return f"Notificación para {self.usuario.username}: {self.mensaje[:50]}"
+        return f"Notificación para {self.usuario_destino.username}: {self.mensaje[:50]}"

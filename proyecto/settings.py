@@ -20,7 +20,6 @@ ALLOWED_HOSTS = ['10.0.2.2', 'localhost', '127.0.0.1', '10.7.70.115','*']
 # Application definition
 
 INSTALLED_APPS = [
-    'admin_interface', #es para la interface del admin
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -37,6 +36,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework_simplejwt',
     'drf_yasg',
+    'admin_interface', #es para la interface del admin
     'colorfield', #es para los colores del admin
 ]
 
@@ -148,7 +148,19 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-    'TOKEN_BLACKLIST_ENABLED': True,  
+    'TOKEN_BLACKLIST_ENABLED': True,
+}
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'Usá: Bearer <tu_token_de_acceso>',
+        }
+    }
 }
 
 # Configuración para verificación de usuario por Email
