@@ -45,7 +45,9 @@ class IniciarChanguitaView(APIView):
                 mensaje=mensaje
             )
 
-            return Response({"success": "Solicitud iniciada. Notificación enviada al proveedor."}, status=200)
+            return Response({"success": "Solicitud iniciada. Notificación enviada al proveedor.",
+                             "id_solicitud": solicitud.id},
+                             status=200)
 
         except ProveedorServicio.DoesNotExist:
             return Response({"error": "Proveedor no encontrado."}, status=404)

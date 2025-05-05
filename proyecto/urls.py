@@ -71,7 +71,8 @@ urlpatterns = [
     path('notificaciones-por-usuario/usuario/<int:user_id>/', NotificacionesPorUsuarioView.as_view(), name='notificaciones-por-usuario'),
     path('guardar-expo-token/', ExpoPushTokenUpdateView.as_view(), name='guardar-expo-token'),
     # Urls de solicitudes
-    path('historial/<int:usuario_id>/', HistorialSolicitudesViewSet.as_view({'get': 'list'}), name='historial'),
+    path('historial/cliente/<int:usuario_id>/', HistorialSolicitudesViewSet.as_view({'get': 'get_solicitudes_cliente'}), name='historial-cliente'),
+    path('historial/proveedor/<int:usuario_id>/', HistorialSolicitudesViewSet.as_view({'get': 'get_solicitudes_proveedor'}), name='historial-proveedor'),
     path('iniciar-changuita/', IniciarChanguitaView.as_view(), name='iniciar-changuita'),
     path('aceptar-changuita/', AceptarChanguitaView.as_view(), name='aceptar-changuita'),
     path('cancelar-changuita/', CancelarChanguitaView.as_view(), name='cancelar-changuita'),
