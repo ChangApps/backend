@@ -2,6 +2,7 @@ from .actualizarContrasenaView import ActualizarContrasenaView
 from .autenticacionView import LoginView, LogoutView, RefreshView
 from .bloqueoUsuariosView import BloquearUsuarioView, DesbloquearUsuarioView, UsuariosBloqueadosView
 from .direccionViewSet import DireccionViewSet
+from .expoPushTokenView import ExpoPushTokenUpdateView
 from .fotosViewSet import FotosViewSet
 from .obtenerIdPorEmailView import ObtenerIdPorEmailView
 from .obtenerUsernameView import ObtenerUsernameView

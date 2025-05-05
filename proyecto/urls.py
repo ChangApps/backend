@@ -6,7 +6,7 @@ from django.conf import settings
 
 #Views
 from ChangApp.categoria.views.categoriaViewSet import CategoriaViewSet
-from ChangApp.usuario.views import UsuarioViewSet, VerificarEmailView, ActualizarContrasenaView, DireccionViewSet, FotosViewSet, LoginView, LogoutView, RefreshView, ObtenerIdPorEmailView, ObtenerUsernameView, ValidarCodigoVerificacionView, ValidarUsuarioView, UsuariosBloqueadosView, BloquearUsuarioView, DesbloquearUsuarioView
+from ChangApp.usuario.views import UsuarioViewSet, VerificarEmailView, ActualizarContrasenaView, DireccionViewSet, FotosViewSet, LoginView, LogoutView, RefreshView, ObtenerIdPorEmailView, ObtenerUsernameView, ValidarCodigoVerificacionView, ValidarUsuarioView, UsuariosBloqueadosView, BloquearUsuarioView, DesbloquearUsuarioView, ExpoPushTokenUpdateView
 from ChangApp.notificacion.views import NotificacionViewSet, NotificacionesPorUsuarioView
 from ChangApp.servicio.views import BuscarProveedoresAPIView, ProveedorServicioPorUsuarioView, ProveedorServicioViewSet, ServicioViewSet, VerificarProveedorServicioView
 from ChangApp.solicitud.views import SolicitudViewSet, HistorialSolicitudesViewSet, IniciarChanguitaView, AceptarChanguitaView, CancelarChanguitaView, ValorarChanguitaView, FinalizarChanguitaView
@@ -69,6 +69,7 @@ urlpatterns = [
     path('proveedores-servicios/usuario/<int:user_id>/<int:servicio_id>/', VerificarProveedorServicioView.as_view(), name='verificar-proveedor-servicio'),
     # Urls de notificaciones
     path('notificaciones-por-usuario/usuario/<int:user_id>/', NotificacionesPorUsuarioView.as_view(), name='notificaciones-por-usuario'),
+    path('guardar-expo-token/', ExpoPushTokenUpdateView.as_view(), name='guardar-expo-token'),
     # Urls de solicitudes
     path('historial/<int:usuario_id>/', HistorialSolicitudesViewSet.as_view({'get': 'list'}), name='historial'),
     path('iniciar-changuita/', IniciarChanguitaView.as_view(), name='iniciar-changuita'),
