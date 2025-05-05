@@ -1,7 +1,14 @@
 from django.contrib import admin
+from ChangApp.usuario.models.direccionModels import Direccion
 from ChangApp.usuario.models.usuarioModels import Usuario
+from ChangApp.usuario.models.direccionModels import Direccion
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.safestring import mark_safe
+
+@admin.register(Direccion)
+class DireccionAdmin(admin.ModelAdmin):
+    list_display = ("id", "calle", "altura", "nroDepto", "piso", "barrio")
+    search_fields = ("calle", "barrio")
 
 @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin): 
@@ -42,7 +49,7 @@ class UsuarioAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        ('Información personal', {'fields': ('first_name', 'last_name', 'documento', 'telefono', 'fechaNacimiento', 'fotoPerfil', 'puntaje')}),
+        ('Información personal', {'fields': ('first_name', 'last_name', 'direccion', 'documento', 'telefono', 'fechaNacimiento', 'fotoPerfil', 'puntaje')}),
         ('Permisos', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Fechas importantes', {'fields': ('last_login', 'date_joined')}),
     )
