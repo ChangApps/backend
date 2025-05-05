@@ -23,8 +23,8 @@ class IniciarChanguitaView(APIView):
     )
 
     def post(self, request):
-        proveedor_id = request.data.get("proveedor_id")
-
+        proveedor_id = request.data.get("proveedorServicio")
+        
         try:
             proveedor_servicio = ProveedorServicio.objects.get(id=proveedor_id)
             proveedor = proveedor_servicio.proveedor

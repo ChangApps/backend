@@ -8,7 +8,7 @@ class EstadoServicio(models.TextChoices):
     CANCELADO = 'C', 'Cancelado'
 
 class Solicitud(models.Model):
-    fechaSolicitud = models.DateField(blank=True, null=True)
+    fechaSolicitud = models.DateField(blank=True, null=True, auto_now_add=True)
     fechaTrabajo = models.DateField(blank=True, null=True)
     fechaValoracion = models.DateField(blank=True, null=True)
     valoracion = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True, blank=True)
