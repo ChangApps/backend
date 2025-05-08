@@ -16,7 +16,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = [
-            'id', 'username', 'first_name', 'last_name', 'email', 'password', 'old_password','password2', 'documento', 'telefono', 
+            'id', 'username', 'first_name', 'last_name', 'email', 'is_staff','password', 'old_password','password2', 'documento', 'telefono', 
             'fotoPerfil', 'fechaNacimiento', 'direccion','cantServiciosContratados', 'cantServiciosTrabajados', 'puntaje','bloqueados', 'is_verified'# 'fechaDisponible', 'horarioDisponible'
         ]
         extra_kwargs = {
