@@ -10,7 +10,6 @@ from ChangApp.usuario.views import UsuarioViewSet, VerificarEmailView, Actualiza
 from ChangApp.notificacion.views import NotificacionViewSet
 from ChangApp.servicio.views import BuscarProveedoresAPIView, ProveedorServicioPorUsuarioView, ProveedorServicioViewSet, ServicioViewSet, VerificarProveedorServicioView
 from ChangApp.solicitud.views import SolicitudViewSet, HistorialSolicitudesViewSet
-from ChangApp.usuario.views.user_id_view import user_id_view
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework import routers
@@ -66,5 +65,4 @@ urlpatterns = [
     path('buscar-proveedores/', BuscarProveedoresAPIView.as_view(), name='buscar-proveedores'),
     path('proveedores-servicios/usuario/<int:user_id>/<int:servicio_id>/', VerificarProveedorServicioView.as_view(), name='verificar-proveedor-servicio'),
     path('historial/<int:usuario_id>/', HistorialSolicitudesViewSet.as_view({'get': 'list'}), name='historial'),
-    path('usuario/userId/', user_id_view),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
