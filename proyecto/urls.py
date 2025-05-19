@@ -52,6 +52,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('actualizar-contrasena/', ActualizarContrasenaView.as_view(), name='actualizar-contraseña'),
     path('verificar-email/', VerificarEmailView.as_view(), name='verificar-email'),
+    path('enviar-email/',  VerificarEmailView.as_view(), name='enviar-email'),
     path('obtener-email-por-id/', ObtenerIdPorEmailView.as_view(), name="obtener-email-por-id"),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redocs/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

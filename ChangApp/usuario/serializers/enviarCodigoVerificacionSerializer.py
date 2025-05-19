@@ -36,3 +36,24 @@ class EnviarCodigoVerificacionSerializer(serializers.Serializer):
 
         # Retornamos un mensaje indicando que el código fue enviado
         return {"message": "Código de verificación enviado al correo"}
+    
+    def enviarMailSinBD(self, validated_data):
+        email = validated_data['email']
+
+        # Generamos un código de verificación (número aleatorio de 6 dígitos)
+        verification_code = randint(100000, 999999)
+
+        # Guardamos el código en caché con una expiración de 5 minutos
+        cache.set(f"verification_code_{email}", verification_code, timeout=300)
+
+        # Enviamos el código de verificación por correo
+        send_mail(
+            'Código de verificación',
+            f'Hola, tu código de verificación es: {verification_code}',
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+
+        return {"message": "Código de verificación enviado al correo"}
+
