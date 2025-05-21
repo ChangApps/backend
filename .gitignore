@@ -1,39 +1,51 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
 
-# dependencies
-node_modules/
-
-# Expo
-.expo/
-dist/
-web-build/
-
-# Native
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-
-# Metro
-.metro-health-check*
-
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
-.DS_Store
-*.pem
-
-# local env files
-.env*.local
-
-# typescript
-*.tsbuildinfo
-
+# Django
+*.log
+*.pot
 *.pyc
-**/__pycache__/
-/backend/ChanguitasApi/__pycache__/
+local_settings.py
+staticfiles/
+static_root/
+.env
+.env.*
+
+# pip environments
+*.venv/
+venv/
+ENV/
+env/
+env.bak/
+
+# Testing
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+.nox/
+
+# Mypy, Pyright, Pyre
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pyright/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VSCode / IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build
+build/

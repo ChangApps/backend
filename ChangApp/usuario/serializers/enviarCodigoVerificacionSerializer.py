@@ -37,7 +37,10 @@ class EnviarCodigoVerificacionSerializer(serializers.Serializer):
         # Retornamos un mensaje indicando que el código fue enviado
         return {"message": "Código de verificación enviado al correo"}
     
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0fa66f4f29e6180f54916608f0218a6597cd8adb
     def enviarMailSinBD(self, validated_data):
         email = validated_data['email']
 
@@ -57,3 +60,7 @@ class EnviarCodigoVerificacionSerializer(serializers.Serializer):
         )
 
         return {"message": "Código de verificación enviado al correo"}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0fa66f4f29e6180f54916608f0218a6597cd8adb
