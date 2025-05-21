@@ -23,8 +23,4 @@ class VerificarEmailView(APIView):
             if serializer.is_valid():
                 response = serializer.enviarMailSinBD(serializer.validated_data)
                 return Response(response, status=status.HTTP_200_OK)
-<<<<<<< HEAD
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-=======
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
->>>>>>> 0fa66f4f29e6180f54916608f0218a6597cd8adb

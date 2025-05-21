@@ -56,15 +56,14 @@ urlpatterns = [
     path('actualizar-contrasena/', ActualizarContrasenaView.as_view(), name='actualizar-contraseña'),
     path('verificar-email/', VerificarEmailView.as_view(), name='verificar-email'),
     path('enviar-email/',  VerificarEmailView.as_view(), name='enviar-email'),
-<<<<<<< HEAD
-    path('obtener-id-por-email/', ObtenerIdPorEmailView.as_view(), name="obtener-id-por-email"),
-=======
     path('obtener-email-por-id/', ObtenerIdPorEmailView.as_view(), name="obtener-email-por-id"),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redocs/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('bloquear/', BloquearUsuarioView.as_view(), name="bloquear-usuario"),
     path('desbloquear/', DesbloquearUsuarioView.as_view(), name="desbloquear-usuario"),
     path('bloqueados/', UsuariosBloqueadosView.as_view(), name="usuarios-bloqueados"),
+    path('validar/', ValidarUsuarioView.as_view(), name='validar-usuario'),
+    path('validar-codigo/', ValidarCodigoVerificacionView.as_view(), name='validar-codigo'),
     path('obtener-username/', ObtenerUsernameView.as_view(), name='obtener-username'),
     # Urls proveedores, servicios
     path('proveedor-servicio-por-usuario/usuario/<int:user_id>/', ProveedorServicioPorUsuarioView.as_view({'get': 'get_proveedor_servicio_by_user'}), name='proveedor-servicio-by-user'),
