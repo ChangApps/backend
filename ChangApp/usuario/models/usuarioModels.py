@@ -32,6 +32,8 @@ class UsuarioManager(BaseUserManager):
         # Crear el superusuario y omitir la validación de campos obligatorios.
         return self.create_user(username, email, password, **extra_fields)
     
+# explote las clases hijas Cliente y Proveedor en Usuario ya que un usuario va a poder contratar y ser contratado
+# por lo tanto y al final de cuentas, hace lo mismo sin importar la diferenciación de tipo de usuario.
 class Usuario(AbstractUser):
     #nombre, apellido, contraseña y email lo trae por defecto el usuario de django
     documento = models.IntegerField(unique=True, blank=True, null=True)
@@ -40,10 +42,10 @@ class Usuario(AbstractUser):
     fotoPerfil = models.ImageField(upload_to='usuario/media/imagenesUsuario', null=True, blank=True, default='imagenesUsuario/empty.jpg')
     fechaNacimiento = models.DateField(blank=False, null=False, verbose_name="fecha nacimiento", default="2000-01-01")
     direccion = models.OneToOneField('usuario.Direccion', on_delete=models.CASCADE, null=True, blank=True)
-    # explote las clases hijas Cliente y Proveedor en Usuario ya que un usuario va a poder contratar y ser contratado
-    # por lo tanto y al final de cuentas, hace lo mismo sin importar la diferenciación de tipo de usuario.
     fechaDisponible = models.DateField(blank=True, null=True)
     horarioDisponible = models.TimeField(blank=True, null=True)
+    # token para recibir notificaciones expo mediante la api de expo
+    # expo_push_token = models.CharField(max_length=255, blank=True, null=True)
     #atributos a mostrar en perfil
     cantServiciosContratados = models.IntegerField(blank=True, null=True)
     cantServiciosTrabajados = models.IntegerField(blank=True, null=True)

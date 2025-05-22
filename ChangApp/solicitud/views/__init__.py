@@ -1,2 +1,7 @@
 from .solicitudViewSet import SolicitudViewSet
 from .historialSolicitudesViewSet import HistorialSolicitudesViewSet
+from .iniciarChanguita import IniciarChanguitaView
+from .aceptarChanguita import AceptarChanguitaView
+from .cancelarChanguita import CancelarChanguitaView
+from .finalizarChanguita import FinalizarChanguitaView
+from .valorarChanguita import ValorarChanguitaView
