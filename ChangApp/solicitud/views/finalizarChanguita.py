@@ -28,8 +28,8 @@ class FinalizarChanguitaView(APIView):
         try:
             solicitud = Solicitud.objects.get(id=solicitud_id)
 
-            if solicitud.proveedorServicio.proveedor != request.user:
-                return Response({"error": "No sos el proveedor asignado."}, status=403)
+            if solicitud.cliente != request.user:
+                return Response({"error": "No sos el cliente asignado."}, status=403)
 
             solicitud.estado = EstadoServicio.FINALIZADO
             solicitud.fechaTrabajo = timezone.now()
