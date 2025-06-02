@@ -44,8 +44,8 @@ class Usuario(AbstractUser):
     direccion = models.OneToOneField('usuario.Direccion', on_delete=models.CASCADE, null=True, blank=True)
     fechaDisponible = models.DateField(blank=True, null=True)
     horarioDisponible = models.TimeField(blank=True, null=True)
-    # token para recibir notificaciones expo mediante la api de expo
-    # expo_push_token = models.CharField(max_length=255, blank=True, null=True)
+    # token firebase para el manejo de notificaciones
+    fcm_token = models.CharField(max_length=255, blank=True, null=True)
     #atributos a mostrar en perfil
     cantServiciosContratados = models.IntegerField(blank=True, null=True)
     cantServiciosTrabajados = models.IntegerField(blank=True, null=True)

@@ -6,6 +6,7 @@ from drf_yasg import openapi
 from ChangApp.servicio.models.proveedorServicioModels import ProveedorServicio
 from ChangApp.solicitud.models import EstadoServicio, Solicitud
 from ChangApp.notificacion.models import Notificacion
+from proyecto.utils.firebase_utils import enviar_notificacion_push
 
 class IniciarChanguitaView(APIView):
     permission_classes = [IsAuthenticated]
@@ -38,8 +39,9 @@ class IniciarChanguitaView(APIView):
             )
             solicitud.save()
 
-            mensaje = f"{request.user.username} quiere contratarte para una changuita. ¿Aceptás?"
-            Notificacion.objects.create(
+            # Se crea y se guarda la notificación en la Base de datos
+            mensaje = f"{cliente.username} quiere contratarte por tu servicio de {proveedor_servicio.servicio.nombreServicio}!"
+            notificacion = Notificacion.objects.create(
                 usuario_destino=proveedor,
                 notificacion_de_sistema=False,
                 mensaje=mensaje

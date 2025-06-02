@@ -1,3 +1,6 @@
+# Ignorar credenciales Firebase
+proyecto/firebase/firebase-config.json
+
 # Byte-compiled / cache
 __pycache__/
 *.py[cod]
@@ -49,3 +52,4 @@ desktop.ini
 
 # Build
 build/
+node_modules
