@@ -4,9 +4,52 @@ from rest_framework import status
 from ChangApp.servicio.models.servicioModels import Servicio
 from datetime import time
 from django.db.models import Q
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class BuscarProveedoresAPIView(APIView):
-    def get(self, request, *args, **kwargs):
+     @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'nombre_servicio',
+                openapi.IN_QUERY,
+                description="Nombre del servicio a buscar",
+                type=openapi.TYPE_STRING,
+                required=True
+            ),
+            openapi.Parameter(
+                'dias[]',
+                openapi.IN_QUERY,
+                description="Lista de días (ej: lunes, martes, etc.)",
+                type=openapi.TYPE_STRING,
+                required=True,
+                multiple=True
+            ),
+            openapi.Parameter(
+                'desde_horas[]',
+                openapi.IN_QUERY,
+                description="Lista de horas de inicio (formato HH:MM:SS)",
+                type=openapi.TYPE_STRING,
+                required=True,
+                multiple=True
+            ),
+            openapi.Parameter(
+                'hasta_horas[]',
+                openapi.IN_QUERY,
+                description="Lista de horas de fin (formato HH:MM:SS)",
+                type=openapi.TYPE_STRING,
+                required=True,
+                multiple=True
+            )
+        ],
+        responses={
+            200: openapi.Response(description="Lista de proveedores disponibles"),
+            400: "Error en los parámetros",
+            404: "No se encontraron servicios",
+            500: "Error interno del servidor"
+        }
+    )
+     def get(self, request, *args, **kwargs):
         nombre_servicio = request.query_params.get('nombre_servicio', None)
         dias = request.query_params.getlist('dias[]', [])
         desde_horas = request.query_params.getlist('desde_horas[]', [])
