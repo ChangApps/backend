@@ -6,6 +6,8 @@ from drf_yasg import openapi
 from ChangApp.servicio.models.proveedorServicioModels import ProveedorServicio
 from ChangApp.solicitud.models import EstadoServicio, Solicitud
 from ChangApp.notificacion.models import Notificacion
+from django.core.mail import send_mail
+from django.conf import settings
 
 class IniciarChanguitaView(APIView):
     permission_classes = [IsAuthenticated]
@@ -38,15 +40,32 @@ class IniciarChanguitaView(APIView):
             )
             solicitud.save()
 
-            mensaje = f"{request.user.username} quiere contratarte para una changuita. ¿Aceptás?"
+               # Mensaje con información del cliente
+            mensaje = (
+                f"{cliente.first_name} {cliente.last_name} (@{cliente.username}) "
+                f"quiere contratarte para una changuita. ¿Aceptás?"
+            )
             Notificacion.objects.create(
                 usuario_destino=proveedor,
                 notificacion_de_sistema=False,
                 mensaje=mensaje
             )
+            
+            
+            # Enviar email al proveedor
+            if proveedor.email:
+                send_mail(
+                    subject='Nueva solicitud de changuita',
+                    message=mensaje,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[proveedor.email],
+                    fail_silently=False,
+                )
 
             return Response({"success": "Solicitud iniciada. Notificación enviada al proveedor.",
-                             "id_solicitud": solicitud.id},
+                             "id_solicitud": solicitud.id,
+                             "email_destino":proveedor.email,
+                             },
                              status=200)
 
         except ProveedorServicio.DoesNotExist:

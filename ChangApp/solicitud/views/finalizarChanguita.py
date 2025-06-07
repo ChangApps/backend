@@ -6,6 +6,8 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from ChangApp.notificacion.models import Notificacion
 from ChangApp.solicitud.models import EstadoServicio, Solicitud
+from django.core.mail import send_mail
+from django.conf import settings
 
 class FinalizarChanguitaView(APIView):
     permission_classes = [IsAuthenticated]
@@ -35,14 +37,29 @@ class FinalizarChanguitaView(APIView):
             solicitud.fechaTrabajo = timezone.now()
             solicitud.save()
 
-            mensaje = f"{request.user.username} ha finalizado la changuita. Puntua su trabajo y dejale un comentario!."
+            mensaje = f"{request.user.username} ha finalizado la changuita. Revisa la app para ver detalles."
             Notificacion.objects.create(
                 usuario_destino=solicitud.cliente,
                 notificacion_de_sistema=False,
                 mensaje=mensaje
             )
+            email_destino =solicitud.proveedor.email
 
-            return Response({"success": "Changuita finalizada."}, status=200)
+               
+            # Enviar email al proveedor
+            if email_destino:
+                send_mail(
+                    subject='Changuita finalizada',
+                    message=mensaje,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[email_destino],
+                    fail_silently=False,
+                )
+
+            return Response({
+                "success": "Changuita finalizada.",
+                "email_enviado_a": email_destino
+            }, status=200)
 
         except Solicitud.DoesNotExist:
             return Response({"error": "Solicitud no encontrada."}, status=404)
