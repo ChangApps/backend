@@ -5,7 +5,8 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from ChangApp.notificacion.models import Notificacion
 from ChangApp.solicitud.models import EstadoServicio, Solicitud
-
+from django.core.mail import send_mail
+from django.conf import settings
 class AceptarChanguitaView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -20,7 +21,6 @@ class AceptarChanguitaView(APIView):
         ),
         responses={200: 'Changuita aceptada'}
     )
-
     def post(self, request):
         solicitud_id = request.data.get("solicitud_id")
 
@@ -36,13 +36,29 @@ class AceptarChanguitaView(APIView):
             solicitud.save()
 
             mensaje = f"{request.user.username} aceptó tu solicitud de changuita. Ponte en contacto para coordinar con él/ella!"
+            destinatario_email = solicitud.cliente.email
+
+            # Crear notificación
             Notificacion.objects.create(
                 usuario_destino=solicitud.cliente,
                 notificacion_de_sistema=False,
                 mensaje=mensaje
             )
 
-            return Response({"success": "Changuita aceptada y comenzada."}, status=200)
+            # Enviar email
+            if destinatario_email:
+                send_mail(
+                    subject='Solicitud de changuita aceptada',
+                    message=mensaje,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[destinatario_email],
+                    fail_silently=False,
+                )
+
+            return Response({
+                "success": "Changuita aceptada y comenzada.",
+                "email_enviado_a": destinatario_email
+            }, status=200)
 
         except Solicitud.DoesNotExist:
             return Response({"error": "Solicitud no encontrada."}, status=404)

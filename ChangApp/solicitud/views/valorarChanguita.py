@@ -6,6 +6,8 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from ChangApp.notificacion.models import Notificacion
 from ChangApp.solicitud.models import EstadoServicio, Solicitud
+from django.core.mail import send_mail
+from django.conf import settings
 
 class ValorarChanguitaView(APIView):
     permission_classes = [IsAuthenticated]
@@ -23,7 +25,6 @@ class ValorarChanguitaView(APIView):
         ),
         responses={200: 'Valoración registrada'}
     )
-
     def post(self, request):
         solicitud_id = request.data.get("solicitud_id")
         valoracion = request.data.get("valoracion")
@@ -44,13 +45,30 @@ class ValorarChanguitaView(APIView):
             solicitud.save()
 
             mensaje = f"{request.user.username} ha dejado un comentario sobre tu trabajo realizado."
+            proveedor = solicitud.proveedorServicio.proveedor
+            email_destino = proveedor.email
+
+            # Notificación
             Notificacion.objects.create(
-                usuario_destino=solicitud.proveedorServicio.proveedor,
+                usuario_destino=proveedor,
                 notificacion_de_sistema=False,
                 mensaje=mensaje
             )
 
-            return Response({"success": "Valoración registrada."}, status=200)
+            # Enviar email al proveedor
+            if email_destino:
+                send_mail(
+                    subject='Has recibido una valoración',
+                    message=mensaje,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[email_destino],
+                    fail_silently=False,
+                )
+
+            return Response({
+                "success": "Valoración registrada.",
+                "email_enviado_a": email_destino
+            }, status=200)
 
         except Solicitud.DoesNotExist:
             return Response({"error": "Solicitud no encontrada."}, status=404)
