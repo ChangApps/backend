@@ -11,6 +11,11 @@ class ProveedorServicioAdmin(admin.ModelAdmin):
 
 @admin.register(Servicio)
 class ServicioAdmin(admin.ModelAdmin):
-    list_display = ('nombreServicio', 'dia', 'desdeHora', 'hastaHora')
-    list_filter = ('dia',)
+    list_display = ('nombreServicio', 'mostrar_dias_y_horarios')
     search_fields = ('nombreServicio', 'descripcion')
+
+    def mostrar_dias_y_horarios(self, obj):
+        # obj.dias es el related_name del modelo HorarioServicio
+        horarios = obj.dias.all()
+        return ", ".join([f"{h.dia} {h.desdeHora.strftime('%H:%M')} - {h.hastaHora.strftime('%H:%M')}" for h in horarios])
+        mostrar_dias_y_horarios.short_description = 'Días y Horarios'

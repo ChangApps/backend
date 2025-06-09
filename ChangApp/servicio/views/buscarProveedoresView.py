@@ -1,14 +1,16 @@
+# Importaciones necesarias de DRF, modelos, utilidades y Swagger
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ChangApp.servicio.models.servicioModels import Servicio
+from ChangApp.servicio.models.servicioModels import Servicio, HorarioServicio
 from datetime import time
 from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 class BuscarProveedoresAPIView(APIView):
-     @swagger_auto_schema(
+    # Documentación Swagger para los parámetros y respuestas
+    @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
                 'nombre_servicio',
@@ -20,7 +22,7 @@ class BuscarProveedoresAPIView(APIView):
             openapi.Parameter(
                 'dias[]',
                 openapi.IN_QUERY,
-                description="Lista de días (ej: lunes, martes, etc.)",
+                description="Lista de días (ej: Lunes, Martes, etc.)",
                 type=openapi.TYPE_STRING,
                 required=True,
                 multiple=True
@@ -28,7 +30,7 @@ class BuscarProveedoresAPIView(APIView):
             openapi.Parameter(
                 'desde_horas[]',
                 openapi.IN_QUERY,
-                description="Lista de horas de inicio (formato HH:MM:SS)",
+                description="Lista de horas de inicio (formato HH:MM o HH:MM:SS)",
                 type=openapi.TYPE_STRING,
                 required=True,
                 multiple=True
@@ -36,11 +38,11 @@ class BuscarProveedoresAPIView(APIView):
             openapi.Parameter(
                 'hasta_horas[]',
                 openapi.IN_QUERY,
-                description="Lista de horas de fin (formato HH:MM:SS)",
+                description="Lista de horas de fin (formato HH:MM o HH:MM:SS)",
                 type=openapi.TYPE_STRING,
                 required=True,
                 multiple=True
-            )
+            ),
         ],
         responses={
             200: openapi.Response(description="Lista de proveedores disponibles"),
@@ -49,116 +51,87 @@ class BuscarProveedoresAPIView(APIView):
             500: "Error interno del servidor"
         }
     )
-     def get(self, request, *args, **kwargs):
-        nombre_servicio = request.query_params.get('nombre_servicio', None)
-        dias = request.query_params.getlist('dias[]', [])
-        desde_horas = request.query_params.getlist('desde_horas[]', [])
-        hasta_horas = request.query_params.getlist('hasta_horas[]', [])
-        
+    def get(self, request, *args, **kwargs):
+        # Obtener parámetros desde el query string
+        nombre_servicio = request.query_params.get('nombre_servicio')
+        dias = request.query_params.getlist('dias[]')
+        desde_horas = request.query_params.getlist('desde_horas[]')
+        hasta_horas = request.query_params.getlist('hasta_horas[]')
+
+        # Validación básica de parámetros
         if not nombre_servicio:
             return Response({"error": "Debe proporcionar el nombre del servicio"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Validar que todos los arrays tengan la misma longitud
+
+        if not dias or not desde_horas or not hasta_horas:
+            return Response({"error": "Debe proporcionar listas de días, horas desde y horas hasta"}, status=status.HTTP_400_BAD_REQUEST)
+
         if len(dias) != len(desde_horas) or len(dias) != len(hasta_horas):
-            return Response({
-                "error": "Los arrays de días, horas de inicio y horas de fin deben tener la misma longitud"
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        if not dias:
-            return Response({"error": "Debe proporcionar al menos un día"}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response({"error": "Las listas de días, horas desde y horas hasta deben tener la misma longitud"}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            # Procesar cada día con su horario específico
-            consultas_por_dia = []
-            
+            filtros = Q()  # Acumulador de condiciones OR
+
+            # Recorrer cada rango horario para construir los filtros
             for i in range(len(dias)):
                 dia = dias[i]
-                desde_hora = desde_horas[i]
-                hasta_hora = hasta_horas[i]
-                
-                try:
-                    # Manejar tanto formato HH:MM:SS como HH:MM
-                    if len(desde_hora.split(':')) == 3:
-                        desde_hora_str = desde_hora
-                    else:
-                        desde_hora_str = desde_hora + ':00'
-                    
-                    if len(hasta_hora.split(':')) == 3:
-                        hasta_hora_str = hasta_hora
-                    else:
-                        hasta_hora_str = hasta_hora + ':00'
-                    
-                    # Convertir strings a objetos time
-                    desde_hora_obj = time.fromisoformat(desde_hora_str)
-                    hasta_hora_obj = time.fromisoformat(hasta_hora_str)
-                    
-                    if desde_hora_obj >= hasta_hora_obj:
-                        return Response({
-                            "error": f"La hora de inicio debe ser menor que la hora de fin para {dia}"
-                        }, status=status.HTTP_400_BAD_REQUEST)
-                    
-                    # Crear consulta para este día específico con su horario
-                    # Un servicio coincide si:
-                    # 1. Es el día correcto
-                    # 2. Hay solapamiento de horarios (su inicio < nuestro fin Y su fin > nuestro inicio)
-                    consulta_dia = Q(
-                        nombreServicio=nombre_servicio,
-                        dia=dia,
-                        desdeHora__lt=hasta_hora_obj,  # Su hora de inicio es antes de nuestra hora de fin
-                        hastaHora__gt=desde_hora_obj   # Su hora de fin es después de nuestra hora de inicio
-                    )
-                    
-                    consultas_por_dia.append(consulta_dia)
-                    
-                except ValueError as ve:
-                    return Response({
-                        "error": f"Formato de hora inválido para {dia}. Use HH:MM o HH:MM:SS. Error: {str(ve)}"
-                    }, status=status.HTTP_400_BAD_REQUEST)
-            
-            # Combinar todas las consultas con OR (al menos una debe cumplirse)
-            consulta_final = consultas_por_dia[0]
-            for consulta in consultas_por_dia[1:]:
-                consulta_final |= consulta
-            
-            # Ejecutar la consulta
-            servicios = Servicio.objects.filter(consulta_final)
-            
-            if not servicios.exists():
-                horarios_info = []
-                for i in range(len(dias)):
-                    horarios_info.append(f"{dias[i]} ({desde_horas[i]}-{hasta_horas[i]})")
-                
-                return Response({
-                    "error": f"No se encontraron servicios para '{nombre_servicio}' en los horarios: {', '.join(horarios_info)}"
-                }, status=status.HTTP_404_NOT_FOUND)
-            
-            # Construir la respuesta con información de los proveedores
-            proveedores_data = []
-            proveedores_ids_agregados = set()  # Para evitar duplicados del mismo proveedor
-            
-            for servicio in servicios:
+                desde_str = desde_horas[i]
+                hasta_str = hasta_horas[i]
+
+                # Asegurar formato HH:MM:SS
+                if len(desde_str.split(':')) == 2:
+                    desde_str += ':00'
+                if len(hasta_str.split(':')) == 2:
+                    hasta_str += ':00'
+
+                # Convertir a objetos time
+                desde_time = time.fromisoformat(desde_str)
+                hasta_time = time.fromisoformat(hasta_str)
+
+                # Validar que la hora de inicio sea menor que la de fin
+                if desde_time >= hasta_time:
+                    return Response({"error": f"La hora de inicio debe ser menor que la hora de fin para {dia}"}, status=status.HTTP_400_BAD_REQUEST)
+
+                # Agregar condición al filtro compuesto (OR entre todas)
+                filtros |= Q(
+                    servicio__nombreServicio=nombre_servicio,
+                    dia=dia,
+                    desdeHora__lt=hasta_time,
+                    hastaHora__gt=desde_time
+                )
+
+            # Buscar horarios que cumplan con alguno de los filtros
+            horarios = HorarioServicio.objects.filter(filtros).select_related('servicio').distinct()
+
+            # Si no hay horarios que coincidan, responder con 404
+            if not horarios.exists():
+                horarios_str = ", ".join([f"{dias[i]} ({desde_horas[i]} - {hasta_horas[i]})" for i in range(len(dias))])
+                return Response({"error": f"No se encontraron servicios '{nombre_servicio}' en los horarios: {horarios_str}"}, status=status.HTTP_404_NOT_FOUND)
+
+            proveedores_data = []  # Lista para acumular proveedores
+
+            # Recorrer los horarios encontrados
+            for horario in horarios:
+                servicio = horario.servicio
+                # Para cada servicio en el horario, obtener los proveedores asociados
                 for proveedor in servicio.obtener_proveedores():
-                    # Evitar duplicados del mismo proveedor
-                    if proveedor.id not in proveedores_ids_agregados:
-                        proveedores_ids_agregados.add(proveedor.id)
-                        proveedores_data.append({
-                            "id": proveedor.id,
-                            "username": proveedor.username,
-                            "nombre": proveedor.first_name,
-                            "apellido": proveedor.last_name,
-                            "email": proveedor.email,
-                            "puntaje": proveedor.puntaje,
-                            "fotoPerfil": proveedor.fotoPerfil.url if proveedor.fotoPerfil else None,
-                            "nombreServicio": servicio.nombreServicio,
-                            "idServicio": servicio.id,
-                            "dia": servicio.dia,
-                            "desdeHora": str(servicio.desdeHora),
-                            "hastaHora": str(servicio.hastaHora),
-                        })
-            
+                    proveedores_data.append({
+                        "id": proveedor.id,
+                        "username": proveedor.username,
+                        "nombre": proveedor.first_name,
+                        "apellido": proveedor.last_name,
+                        "email": proveedor.email,
+                        "puntaje": getattr(proveedor, 'puntaje', None),
+                        "fotoPerfil": proveedor.fotoPerfil.url if getattr(proveedor, 'fotoPerfil', None) else None,
+                        "nombreServicio": servicio.nombreServicio,
+                        "idServicio": servicio.id,
+                        "dia": horario.dia,
+                        "desdeHora": str(horario.desdeHora),
+                        "hastaHora": str(horario.hastaHora)
+                    })
+
+            # Devolver la lista de proveedores encontrados
             return Response({"proveedores": proveedores_data}, status=status.HTTP_200_OK)
-            
+
         except Exception as e:
-            return Response({
-                "error": f"Error interno del servidor: {str(e)}"
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # Capturar errores inesperados y devolver 500
+            return Response({"error": f"Error interno del servidor: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

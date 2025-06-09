@@ -1,26 +1,48 @@
 from rest_framework import serializers
-from ChangApp.servicio.models.servicioModels import Servicio
+from ChangApp.servicio.models.servicioModels import Servicio, HorarioServicio
 
-class ServicioSerializer(serializers.ModelSerializer):
-    dias = serializers.SerializerMethodField()
-
+# Serializador para el modelo HorarioServicio
+class HorarioServicioSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Servicio
-        fields = ['id', 'nombreServicio', 'descripcion', 'dia', 'desdeHora', 'hastaHora', 'dias']
+        model = HorarioServicio
+        fields = ['dia', 'desdeHora', 'hastaHora']  # Campos que se expondrán en la API
 
-    def get_dias(self, obj):
-        # Si existen múltiples servicios con el mismo nombre, devuelva todos sus días/horas
-        servicios = Servicio.objects.filter(nombreServicio=obj.nombreServicio)
-        return [
-            {
-                'dia': servicio.dia,
-                'desdeHora': servicio.desdeHora,
-                'hastaHora': servicio.hastaHora
-            } for servicio in servicios
-        ]
-    
-    # Validación general para verificar que desdeHora sea menor que hastaHora
+    # Validación personalizada para asegurar que la hora de inicio sea menor que la de fin
     def validate(self, data):
         if data['desdeHora'] >= data['hastaHora']:
             raise serializers.ValidationError("La hora de inicio debe ser menor que la hora de fin.")
         return data
+
+# Serializador para el modelo Servicio, que incluye los horarios (dias) como anidados
+class ServicioSerializer(serializers.ModelSerializer):
+    dias = HorarioServicioSerializer(many=True)  # Relación 1 a muchos: un servicio tiene varios horarios
+
+    class Meta:
+        model = Servicio
+        fields = ['id', 'nombreServicio', 'descripcion', 'dias']  # Campos del servicio + sus horarios
+
+    # Método para crear un nuevo Servicio junto con sus horarios
+    def create(self, validated_data):
+        dias_data = validated_data.pop('dias')  # Se separan los datos de los horarios
+        servicio = Servicio.objects.create(**validated_data)  # Se crea el Servicio
+        for dia_data in dias_data:
+            # Se crea cada HorarioServicio relacionado al servicio recién creado
+            HorarioServicio.objects.create(servicio=servicio, **dia_data)
+        return servicio
+
+    # Método para actualizar un Servicio junto con sus horarios
+    def update(self, instance, validated_data):
+        dias_data = validated_data.pop('dias', None)  # Se separan los datos de los horarios (si vienen)
+        
+        # Se actualizan los campos del Servicio
+        instance.nombreServicio = validated_data.get('nombreServicio', instance.nombreServicio)
+        instance.descripcion = validated_data.get('descripcion', instance.descripcion)
+        instance.save()
+
+        # Si se envían horarios, se reemplazan completamente los existentes
+        if dias_data is not None:
+            instance.dias.all().delete()  # Se eliminan los horarios antiguos
+            for dia_data in dias_data:
+                HorarioServicio.objects.create(servicio=instance, **dia_data)  # Se crean los nuevos horarios
+        
+        return instance
