@@ -8,6 +8,7 @@ from ChangApp.notificacion.models import Notificacion
 from ChangApp.solicitud.models import EstadoServicio, Solicitud
 from django.core.mail import send_mail
 from django.conf import settings
+from ChangApp.usuario.models.usuarioModels import Usuario
 
 class FinalizarChanguitaView(APIView):
     permission_classes = [IsAuthenticated]
@@ -43,7 +44,8 @@ class FinalizarChanguitaView(APIView):
                 notificacion_de_sistema=False,
                 mensaje=mensaje
             )
-            email_destino =solicitud.proveedor.email
+            usuario_proveedor = solicitud.proveedorServicio.proveedor.email
+            email_destino = usuario_proveedor
 
                
             # Enviar email al proveedor
