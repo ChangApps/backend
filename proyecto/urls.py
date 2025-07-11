@@ -6,7 +6,7 @@ from django.conf import settings
 
 #Views
 from ChangApp.categoria.views.categoriaViewSet import CategoriaViewSet
-from ChangApp.usuario.views import UsuarioViewSet, VerificarEmailView, ActualizarContrasenaView, DireccionViewSet, FotosViewSet, LoginView, LogoutView, RefreshView, ObtenerIdPorEmailView, ObtenerUsernameView, ValidarCodigoVerificacionView, ValidarUsuarioView, UsuariosBloqueadosView, BloquearUsuarioView, DesbloquearUsuarioView, ExpoPushTokenUpdateView
+from ChangApp.usuario.views import UsuarioViewSet, VerificarEmailView, ActualizarContrasenaView, DireccionViewSet, FotosViewSet, LoginView, LogoutView, RefreshView, ObtenerIdPorEmailView, ObtenerUsernameView, ValidarCodigoVerificacionView, ValidarUsuarioView, UsuariosBloqueadosView, BloquearUsuarioView, DesbloquearUsuarioView, ExpoPushTokenUpdateView,BuscarUsuarioViewSet
 from ChangApp.notificacion.views import NotificacionViewSet, NotificacionesPorUsuarioView
 from ChangApp.servicio.views import BuscarProveedoresAPIView, ProveedorServicioPorUsuarioView, ProveedorServicioViewSet, ServicioViewSet, VerificarProveedorServicioView
 from ChangApp.solicitud.views import SolicitudViewSet, HistorialSolicitudesViewSet, IniciarChanguitaView, AceptarChanguitaView, CancelarChanguitaView, ValorarChanguitaView, FinalizarChanguitaView
@@ -80,4 +80,5 @@ urlpatterns = [
     path('cancelar-changuita/', CancelarChanguitaView.as_view(), name='cancelar-changuita'),
     path('finalizar-changuita/', FinalizarChanguitaView.as_view(), name='finalizar-changuita'),
     path('valorar-changuita/', ValorarChanguitaView.as_view(), name='valorar-changuita'),
+    path('buscar-usuario/', BuscarUsuarioViewSet.as_view({'get': 'buscar'}), name='buscar-usuario'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

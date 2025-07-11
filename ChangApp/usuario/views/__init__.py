@@ -10,3 +10,4 @@ from .usuarioViewSet import UsuarioViewSet
 from .validarCodigoVerificacionView import ValidarCodigoVerificacionView
 from .validarUsuarioView import ValidarUsuarioView
 from .verificarEmailView import VerificarEmailView
+from .buscarUsuarioView import BuscarUsuarioViewSet
