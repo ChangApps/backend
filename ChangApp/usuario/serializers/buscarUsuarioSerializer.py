@@ -1,6 +1,4 @@
 from rest_framework import serializers
-from ChangApp.servicio.models import Servicio
-from ChangApp.usuario.models.usuarioModels import Usuario
 
 class BuscarUsuarioSerializer(serializers.Serializer):
     id = serializers.IntegerField(source='proveedor.id')
@@ -11,11 +9,9 @@ class BuscarUsuarioSerializer(serializers.Serializer):
     servicios = serializers.SerializerMethodField()
 
     def get_servicios(self, obj):
-        servicios = Servicio.objects.filter(proveedores_servicio__proveedor=obj.proveedor).distinct()
-
-        resultado = []
-        for servicio in servicios:
-            resultado.append({
+        servicios = obj['servicios']  
+        return [
+            {
                 "id": servicio.id,
                 "nombreServicio": servicio.nombreServicio,
                 "descripcion": servicio.descripcion,
@@ -26,6 +22,6 @@ class BuscarUsuarioSerializer(serializers.Serializer):
                         "hastaHora": dia.hastaHora
                     } for dia in servicio.dias.all()
                 ]
-            })
-
-        return resultado
+            }
+            for servicio in servicios
+        ]
