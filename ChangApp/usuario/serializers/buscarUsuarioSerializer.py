@@ -3,6 +3,7 @@ from ChangApp.servicio.models import Servicio
 from ChangApp.usuario.models.usuarioModels import Usuario
 
 class BuscarUsuarioSerializer(serializers.Serializer):
+    id = serializers.IntegerField(source='proveedor.id')
     username = serializers.CharField(source='proveedor.username')
     first_name = serializers.CharField(source='proveedor.first_name')
     last_name = serializers.CharField(source='proveedor.last_name')
