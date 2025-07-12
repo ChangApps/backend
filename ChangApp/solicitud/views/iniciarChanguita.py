@@ -31,6 +31,23 @@ class IniciarChanguitaView(APIView):
             proveedor_servicio = ProveedorServicio.objects.get(id=proveedor_id)
             proveedor = proveedor_servicio.proveedor
             cliente = request.user
+            categorias_servicio = proveedor_servicio.servicio.categorias.all()
+
+            # Verificar si el cliente ya tiene una solicitud activa en alguna de esas categorías
+            solicitud_existente = Solicitud.objects.filter(
+                cliente=cliente,
+                estado__in=[
+                    EstadoServicio.PENDIENTE_ACEPTACION,
+                    EstadoServicio.INICIADO,
+                ],
+                proveedorServicio__servicio__categorias__in=categorias_servicio
+            ).distinct().exists() # Agrego distinct() para evitar devolver duplicados por combinaciones de relaciones 
+
+            if solicitud_existente:
+                return Response(
+                    {"error": "Ya tenés una changuita activa en esta categoría. Finalizala antes de contratar otro proveedor."},
+                    status=400
+                )
 
              # Crear la solicitud
             solicitud = Solicitud.objects.create(
@@ -50,7 +67,6 @@ class IniciarChanguitaView(APIView):
                 notificacion_de_sistema=False,
                 mensaje=mensaje
             )
-            
             
             # Enviar email al proveedor
             if proveedor.email:
