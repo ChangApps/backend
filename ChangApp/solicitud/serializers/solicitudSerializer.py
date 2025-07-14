@@ -13,12 +13,19 @@ class SolicitudSerializer(serializers.ModelSerializer):
     nombreServicio = serializers.SerializerMethodField()  
     cliente_nombre = serializers.SerializerMethodField() 
 
+    servicio_id = serializers.SerializerMethodField()
+
+    def get_servicio_id(self, obj):
+        if obj.proveedorServicio and obj.proveedorServicio.servicio:
+            return obj.proveedorServicio.servicio.id
+        return None
+
     class Meta:
         model = Solicitud
         fields = [
             'id', 'comentario', 'fechaSolicitud', 'fechaTrabajo', 
             'fechaValoracion', 'valoracion', 'proveedorServicio', 
-            'cliente', 'notificacion', 'estado', 'proveedor_id','nombreServicio','cliente_nombre'
+            'cliente', 'notificacion', 'estado', 'proveedor_id','nombreServicio','cliente_nombre','servicio_id'
         ]
 
     def create(self, validated_data):
