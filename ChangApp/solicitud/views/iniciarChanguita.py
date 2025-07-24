@@ -59,8 +59,12 @@ class IniciarChanguitaView(APIView):
 
                # Mensaje con información del cliente
             mensaje = (
+                f"Hola {proveedor.first_name},\n\n"
                 f"{cliente.first_name} {cliente.last_name} (@{cliente.username}) "
-                f"quiere contratarte para una changuita. ¿Aceptás?"
+                f"desea contratarte para una changuita. 💼\n\n"
+                f"Por favor, ingresá a la app para aceptar o rechazar la solicitud.\n\n"
+                f"Saludos,\n"
+                f"El equipo de Changuitas"
             )
             Notificacion.objects.create(
                 usuario_destino=proveedor,

@@ -44,7 +44,18 @@ class ValorarChanguitaView(APIView):
             solicitud.fechaValoracion = timezone.now()
             solicitud.save()
 
-            mensaje = f"{request.user.username} ha dejado un comentario sobre tu trabajo realizado."
+            comentario_texto = f"✍️ Comentario: \"{comentario}\"\n\n" if comentario else ""
+
+            mensaje = (
+                f"Hola {solicitud.proveedorServicio.proveedor.first_name},\n\n"
+                f"{solicitud.cliente.first_name} acaba de dejar una valoración sobre la changuita que realizaste. ⭐\n\n"
+                f"{comentario_texto}"
+                f"📱 Podés revisar la valoración completa ingresando a la app.\n\n"
+                f"Gracias por ofrecer tus servicios en ChangApp 💙\n\n"
+                f"Saludos,\n"
+                f"El equipo de Changuitas"
+            )
+            
             proveedor = solicitud.proveedorServicio.proveedor
             email_destino = proveedor.email
 
@@ -58,7 +69,7 @@ class ValorarChanguitaView(APIView):
             # Enviar email al proveedor
             if email_destino:
                 send_mail(
-                    subject='Has recibido una valoración',
+                    subject='¡Recibiste una nueva valoración!',
                     message=mensaje,
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[email_destino],

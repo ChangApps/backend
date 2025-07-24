@@ -24,40 +24,47 @@ class CancelarChanguitaView(APIView):
     )
     def post(self, request):
         solicitud_id = request.data.get("solicitud_id")
+        motivo = request.data.get("motivo")
 
         try:
             solicitud = Solicitud.objects.get(id=solicitud_id)
             usuario_actual = request.user
 
-            # Verificar si el usuario es cliente o proveedor
             if solicitud.cliente == usuario_actual:
-                mensaje = f"{usuario_actual.username} ha cancelado la changuita."
                 destino = solicitud.proveedorServicio.proveedor if solicitud.proveedorServicio else None
             elif solicitud.proveedorServicio and solicitud.proveedorServicio.proveedor == usuario_actual:
-                mensaje = f"{usuario_actual.username} ha cancelado la changuita."
                 destino = solicitud.cliente
             else:
                 return Response({"error": "No estás autorizado para cancelar esta changuita."}, status=403)
 
-            # Cambiar estado sin eliminar el proveedorServicio
+            # Cambiar estado
             solicitud.estado = EstadoServicio.CANCELADO
             solicitud.save()
 
-            email_destino = None
-
-            # Crear notificación, aunque destino sea None
+            # Crear notificación
             Notificacion.objects.create(
                 usuario_destino=destino,
                 notificacion_de_sistema=False,
-                mensaje=mensaje
+                mensaje=f"{usuario_actual.username} ha cancelado la changuita."
             )
 
-            # Enviar email si hay destino y tiene email
-            if destino and destino.email:
-                email_destino = destino.email
+            # Enviar email con motivo personalizado
+            email_destino = destino.email if destino and destino.email else None
+            if email_destino:
+                asunto = "Una changuita fue cancelada"
+                cuerpo = (
+                    f"👋 Hola {destino.first_name},\n\n"
+                    f"Lamentamos informarte que {usuario_actual.first_name} ha cancelado el servicio solicitado. 😕\n\n"
+                    f"📌 Motivo de la cancelación:\n"
+                    f"\"{motivo}\"\n\n"
+                    f"Te recomendamos estar atento a nuevas oportunidades en la plataforma.\n\n"
+                    f"🙏 Gracias por usar Changuitas. Si tenés alguna duda o problema, no dudes en contactarnos.\n\n"
+                    f"Saludos,\n"
+                    f"El equipo de Changuitas"
+                )
                 send_mail(
-                    subject='Changuita Cancelada',
-                    message=mensaje,
+                    subject=asunto,
+                    message=cuerpo,
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[email_destino],
                     fail_silently=False,

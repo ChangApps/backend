@@ -38,7 +38,14 @@ class FinalizarChanguitaView(APIView):
             solicitud.fechaTrabajo = timezone.now()
             solicitud.save()
 
-            mensaje = f"{request.user.username} ha finalizado la changuita. Revisa la app para ver detalles."
+            mensaje = (
+                f"Hola {solicitud.proveedorServicio.proveedor.first_name},\n\n"
+                f"Te informamos que {solicitud.cliente.first_name} ha marcado como finalizada la changuita que tenías en curso. ✅\n\n"
+                f"Podés ingresar a la app para ver los detalles del trabajo. ⭐\n\n"
+                f"Gracias por brindar tus servicios a través de ChangApp. 💙\n\n"
+                f"Saludos,\n"
+                f"El equipo de Changuitas"
+                )
             Notificacion.objects.create(
                 usuario_destino=solicitud.cliente,
                 notificacion_de_sistema=False,

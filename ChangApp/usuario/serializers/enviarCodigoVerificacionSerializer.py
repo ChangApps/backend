@@ -28,7 +28,14 @@ class EnviarCodigoVerificacionSerializer(serializers.Serializer):
         # Enviamos el código de verificación por correo
         send_mail(
             'Código de verificación',
-            f'Hola, tu código de verificación es: {verification_code}',
+            f"Hola,\n\n"
+            f"Recibimos una solicitud para verificar tu dirección de correo electrónico. 📩\n\n"
+            f"🔐 Tu código de verificación es:\n\n"
+            f"{verification_code}\n\n"
+            f"Este código es válido por 5 minutos.\n\n"
+            f"Si no fuiste vos quien solicitó este código, podés ignorar este mensaje.\n\n"
+            f"Saludos,\n"
+            f"El equipo de Changuitas",
             settings.DEFAULT_FROM_EMAIL,
             [email],
             fail_silently=False,
@@ -50,7 +57,14 @@ class EnviarCodigoVerificacionSerializer(serializers.Serializer):
         # Enviamos el código de verificación por correo
         send_mail(
             'Código de verificación',
-            f'Hola, tu código de verificación es: {verification_code}',
+            f"Hola,\n\n"
+            f"Recibimos una solicitud para verificar tu dirección de correo electrónico. 📩\n\n"
+            f"🔐 Tu código de verificación es:\n\n"
+            f"{verification_code}\n\n"
+            f"Este código es válido por 5 minutos.\n\n"
+            f"Si no fuiste vos quien solicitó este código, podés ignorar este mensaje.\n\n"
+            f"Saludos,\n"
+            f"El equipo de Changuitas",
             settings.DEFAULT_FROM_EMAIL,
             [email],
             fail_silently=False,
