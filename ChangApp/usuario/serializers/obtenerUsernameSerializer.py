@@ -20,8 +20,15 @@ class ObtenerUsernameSerializer(serializers.Serializer):
 
         # Enviar el nombre de usuario por correo
         send_mail(
-            'Recuperación de Nombre de Usuario',
-            f'Hola, tu nombre de usuario es: {username}',
+            'Recuperación de nombre de usuario',
+            f"Hola {usuario.first_name},\n\n"
+            f"Recibimos una solicitud para recuperar tu nombre de usuario asociado a este correo electrónico. 🧠🔐\n\n"
+            f"📛 Tu nombre de usuario es:\n\n"
+            f"{username}\n\n"
+            f"Si no solicitaste esta información, podés ignorar este mensaje. No se ha hecho ningún cambio en tu cuenta.\n\n"
+            f"Gracias por usar ChangApp. \n\n"
+            f"Saludos,\n"
+            f"El equipo de Changuitas",
             settings.DEFAULT_FROM_EMAIL,
             [email],
             fail_silently=False,
