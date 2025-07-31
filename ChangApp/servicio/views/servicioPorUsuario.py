@@ -21,7 +21,7 @@ class ServicioPorUsuarioMixin:
             servicios = list({ps.servicio.id: ps.servicio for ps in proveedor_servicios}.values())
 
             # Serializa los servicios
-            serializer = ServicioSerializer(servicios, many=True)
+            serializer = ServicioSerializer(servicios, many=True, context={'proveedor': usuario})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Usuario.DoesNotExist:
             return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
