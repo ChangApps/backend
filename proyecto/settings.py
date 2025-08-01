@@ -36,11 +36,11 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework_simplejwt',
     'drf_yasg',
-    'admin_interface', #es para la interface del admin
-    'colorfield', #es para los colores del admin
+    #'admin_interface', #es para la interface del admin
+    #'colorfield', #es para los colores del admin
 ]
 
-X_FRAME_OPTIONS='SAMEORIGIN' #Es para la edicion del admin pero para la version 3 de django
+# X_FRAME_OPTIONS='SAMEORIGIN' #Es para la edicion del admin pero para la version 3 de django
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
