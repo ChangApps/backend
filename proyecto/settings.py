@@ -20,6 +20,8 @@ ALLOWED_HOSTS = ['10.0.2.2', 'localhost', '127.0.0.1', '10.7.70.115','*']
 # Application definition
 
 INSTALLED_APPS = [
+    'admin_interface', #es para la interface del admin
+    'colorfield', #es para los colores del admin
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -36,8 +38,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework_simplejwt',
     'drf_yasg',
-    'admin_interface', #es para la interface del admin
-    'colorfield', #es para los colores del admin
+    
 ]
 
 X_FRAME_OPTIONS='SAMEORIGIN' #Es para la edicion del admin pero para la version 3 de django
