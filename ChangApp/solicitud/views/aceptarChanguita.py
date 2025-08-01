@@ -35,7 +35,15 @@ class AceptarChanguitaView(APIView):
             solicitud.estado = EstadoServicio.INICIADO
             solicitud.save()
 
-            mensaje = f"{request.user.username} aceptó tu solicitud de changuita. Ponte en contacto para coordinar con él/ella!"
+            mensaje = (
+                f"🎉 Buenas noticias, {solicitud.cliente.first_name}!\n\n"
+                f"{request.user.first_name} aceptó tu solicitud de changuita. 🙌\n\n"
+                f"Ahora pueden ponerse en contacto para coordinar los detalles del servicio.\n\n"
+                f"Gracias por usar Changuitas. Estamos felices de ayudarte a concretar tus tareas. \n\n"
+                f"🔔 Recordá que podés ver el estado de esta changuita en la app.\n\n"
+                f"Saludos,\n"
+                f"El equipo de Changuitas"
+            )
             destinatario_email = solicitud.cliente.email
 
             # Crear notificación

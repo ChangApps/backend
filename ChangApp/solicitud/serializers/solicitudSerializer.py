@@ -8,6 +8,7 @@ class SolicitudSerializer(serializers.ModelSerializer):
     notificacion = serializers.PrimaryKeyRelatedField(queryset=Notificacion.objects.all(), required=False, allow_null=True)
     valoracion = serializers.IntegerField(allow_null=True, required=False)
     estado = serializers.ChoiceField(choices=EstadoServicio.choices)
+    estado_display = serializers.SerializerMethodField()
 
     proveedor_id = serializers.SerializerMethodField()
     nombreServicio = serializers.SerializerMethodField()  
@@ -25,7 +26,7 @@ class SolicitudSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'comentario', 'fechaSolicitud', 'fechaTrabajo', 
             'fechaValoracion', 'valoracion', 'proveedorServicio', 
-            'cliente', 'notificacion', 'estado', 'proveedor_id','nombreServicio','cliente_nombre','servicio_id'
+            'cliente', 'notificacion', 'estado', 'estado_display', 'proveedor_id','nombreServicio','cliente_nombre','servicio_id'
         ]
 
     def create(self, validated_data):
@@ -38,6 +39,9 @@ class SolicitudSerializer(serializers.ModelSerializer):
         solicitud.save()  # Guardamos la solicitud normalmente
         return solicitud
 
+    def get_estado_display(self, obj):
+        return obj.get_estado_display()
+    
     @staticmethod
     def obtener_historial(cliente_id):
         solicitudes = Solicitud.objects.filter(cliente=cliente_id)

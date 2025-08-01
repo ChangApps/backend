@@ -70,7 +70,7 @@ urlpatterns = [
     path('buscar-proveedores/', BuscarProveedoresAPIView.as_view(), name='buscar-proveedores'),
     path('proveedores-servicios/usuario/<int:user_id>/<int:servicio_id>/', VerificarProveedorServicioView.as_view(), name='verificar-proveedor-servicio'),
     # Urls de notificaciones
-    path('notificaciones-por-usuario/usuario/<int:user_id>/', NotificacionesPorUsuarioView.as_view(), name='notificaciones-por-usuario'),
+    path('notificaciones-por-usuario/', NotificacionesPorUsuarioView.as_view(), name='notificaciones-por-usuario'),
     path('guardar-expo-token/', ExpoPushTokenUpdateView.as_view(), name='guardar-expo-token'),
     # Urls de solicitudes
     path('historial/cliente/<int:usuario_id>/', HistorialSolicitudesViewSet.as_view({'get': 'get_solicitudes_cliente'}), name='historial-cliente'),

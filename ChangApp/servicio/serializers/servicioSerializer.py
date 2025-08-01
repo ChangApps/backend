@@ -1,3 +1,4 @@
+from ChangApp.servicio.models.proveedorServicioModels import ProveedorServicio
 from rest_framework import serializers
 from ChangApp.servicio.models.servicioModels import Servicio, HorarioServicio
 
@@ -16,10 +17,11 @@ class HorarioServicioSerializer(serializers.ModelSerializer):
 # Serializador para el modelo Servicio, que incluye los horarios (dias) como anidados
 class ServicioSerializer(serializers.ModelSerializer):
     dias = HorarioServicioSerializer(many=True)  # Relación 1 a muchos: un servicio tiene varios horarios
-
+    fechaDesde = serializers.SerializerMethodField() #Se agrega el campo fechaDesde para mostrar la fecha de inicio del servicio
+    
     class Meta:
         model = Servicio
-        fields = ['id', 'nombreServicio', 'descripcion', 'dias']  # Campos del servicio + sus horarios
+        fields = ['id', 'nombreServicio', 'descripcion', 'dias', 'fechaDesde']  # Campos del servicio + sus horarios
 
     # Método para crear un nuevo Servicio junto con sus horarios
     def create(self, validated_data):
@@ -29,6 +31,16 @@ class ServicioSerializer(serializers.ModelSerializer):
             # Se crea cada HorarioServicio relacionado al servicio recién creado
             HorarioServicio.objects.create(servicio=servicio, **dia_data)
         return servicio
+    
+    def get_fechaDesde(self, servicio):
+        proveedor = self.context.get('proveedor')
+        if proveedor:
+            relacion = ProveedorServicio.objects.filter(
+                proveedor=proveedor, servicio=servicio
+            ).order_by('-fechaDesde').first()
+            if relacion:
+                return relacion.fechaDesde
+        return None
 
     # Método para actualizar un Servicio junto con sus horarios
     def update(self, instance, validated_data):
