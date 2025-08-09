@@ -47,11 +47,11 @@ class ValorarChanguitaView(APIView):
             comentario_texto = f"✍️ Comentario: \"{comentario}\"\n\n" if comentario else ""
 
             mensaje = (
-                f"Hola {solicitud.proveedorServicio.proveedor.first_name},\n\n"
-                f"{solicitud.cliente.first_name} acaba de dejar una valoración sobre la changuita que realizaste. ⭐\n\n"
+                f"Hola {solicitud.proveedorServicio.proveedor.first_name} {solicitud.proveedorServicio.proveedor.last_name}!\n\n"
+                f"{solicitud.cliente.first_name} {solicitud.cliente.last_name} acaba de dejar una valoración sobre la changuita que realizaste. ⭐\n\n"
                 f"{comentario_texto}"
                 f"📱 Podés revisar la valoración completa ingresando a la app.\n\n"
-                f"Gracias por ofrecer tus servicios en ChangApp 💙\n\n"
+                f"Gracias por ofrecer tus servicios en ChangApp.\n\n"
                 f"Saludos,\n"
                 f"El equipo de Changuitas"
             )

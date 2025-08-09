@@ -53,8 +53,8 @@ class CancelarChanguitaView(APIView):
             if email_destino:
                 asunto = "Una changuita fue cancelada"
                 cuerpo = (
-                    f"👋 Hola {destino.first_name},\n\n"
-                    f"Lamentamos informarte que {usuario_actual.first_name} ha cancelado el servicio solicitado. 😕\n\n"
+                    f"👋 Hola {destino.first_name} {destino.last_name},\n\n"
+                    f"Lamentamos informarte que {usuario_actual.first_name} {usuario_actual.last_name}ha cancelado el servicio solicitado. 😕\n\n"
                     f"📌 Motivo de la cancelación:\n"
                     f"\"{motivo}\"\n\n"
                     f"Te recomendamos estar atento a nuevas oportunidades en la plataforma.\n\n"
