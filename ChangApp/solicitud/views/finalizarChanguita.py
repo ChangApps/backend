@@ -39,10 +39,10 @@ class FinalizarChanguitaView(APIView):
             solicitud.save()
 
             mensaje = (
-                f"Hola {solicitud.proveedorServicio.proveedor.first_name},\n\n"
-                f"Te informamos que {solicitud.cliente.first_name} ha marcado como finalizada la changuita que tenías en curso. ✅\n\n"
+                f"👋 Hola {solicitud.proveedorServicio.proveedor.first_name} {solicitud.proveedorServicio.proveedor.last_name}!\n\n"
+                f"Te informamos que {solicitud.cliente.first_name} {solicitud.cliente.last_name} ha marcado como finalizada la changuita que tenías en curso. ✅\n\n"
                 f"Podés ingresar a la app para ver los detalles del trabajo. ⭐\n\n"
-                f"Gracias por brindar tus servicios a través de ChangApp. 💙\n\n"
+                f"Gracias por brindar tus servicios a través de ChangApp.\n\n"
                 f"Saludos,\n"
                 f"El equipo de Changuitas"
                 )

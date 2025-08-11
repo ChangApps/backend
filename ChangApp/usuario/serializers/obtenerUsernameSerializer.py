@@ -21,7 +21,7 @@ class ObtenerUsernameSerializer(serializers.Serializer):
         # Enviar el nombre de usuario por correo
         send_mail(
             'Recuperación de nombre de usuario',
-            f"Hola {usuario.first_name},\n\n"
+            f"Hola {usuario.first_name} {usuario.last_name}!\n\n"
             f"Recibimos una solicitud para recuperar tu nombre de usuario asociado a este correo electrónico. 🧠🔐\n\n"
             f"📛 Tu nombre de usuario es:\n\n"
             f"{username}\n\n"
