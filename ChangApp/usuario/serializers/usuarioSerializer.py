@@ -3,6 +3,7 @@ from ChangApp.usuario.models.usuarioModels import Usuario
 from ChangApp.usuario.models.direccionModels import Direccion
 from rest_framework import serializers
 from .direccionSerializer import DireccionSerializer
+import re
 
 class UsuarioSerializer(serializers.ModelSerializer):
     direccion = DireccionSerializer()
@@ -36,6 +37,27 @@ class UsuarioSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({
                     "fechaNacimiento": "Debes tener al menos 18 años para registrarte."
                 })
+                
+        if 'password' in data and data['password']:
+            password = data['password']
+            
+            # Longitud mínima
+            if len(password) < 8:
+                raise serializers.ValidationError({
+                    "password": "La contraseña debe tener al menos 8 caracteres."
+                })
+            
+            # Al menos una mayúscula
+            if not re.search(r'[A-Z]', password):
+                raise serializers.ValidationError({
+                    "password": "La contraseña debe contener al menos una letra mayúscula."
+                })
+            
+            # Al menos un número
+            if not re.search(r'[0-9]', password):
+                raise serializers.ValidationError({
+                    "password": "La contraseña debe contener al menos un número."
+                })       
 
         # Validación para creación de usuario
         if self.instance is None:  # Es una creación
