@@ -43,6 +43,7 @@ class BuscarUsuarioViewSet(viewsets.ModelViewSet):
             Q(servicio__nombreServicio__icontains=q_lower)
         ).values_list('servicio__id', flat=True).distinct()
 
+        # Filtramos proveedores y excluimos bloqueados (mutuos)
         queryset = ProveedorServicio.objects.filter(
             (
                 Q(proveedor__username__icontains=q) |
@@ -50,6 +51,9 @@ class BuscarUsuarioViewSet(viewsets.ModelViewSet):
                 Q(proveedor__last_name__icontains=q) |
                 Q(servicio__nombreServicio__icontains=q)
             ) & ~Q(proveedor=usuario_actual)
+        ).exclude(
+            Q(proveedor__in=usuario_actual.bloqueados.all()) |   # yo bloqueé
+            Q(proveedor__bloqueados=usuario_actual)              # me bloquearon
         ).distinct()
 
         # Agrupar resultados
