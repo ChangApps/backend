@@ -8,11 +8,15 @@ from ChangApp.servicio.models import ProveedorServicio
 from ChangApp.servicio.models.servicioModels import Servicio
 from ChangApp.usuario.serializers.buscarUsuarioSerializer import BuscarUsuarioSerializer
 
+
 def obtener_proveedor_servicio_por_usuario_y_servicio(user_id, servicio_id):
     try:
-        return ProveedorServicio.objects.filter(proveedor_id=user_id, servicio_id=servicio_id).first()
+        return ProveedorServicio.objects.filter(
+            proveedor_id=user_id, servicio_id=servicio_id
+        ).first()
     except Exception:
         return None
+
 
 class BuscarUsuarioViewSet(viewsets.ModelViewSet):
     serializer_class = BuscarUsuarioSerializer
@@ -20,76 +24,90 @@ class BuscarUsuarioViewSet(viewsets.ModelViewSet):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                'q',
+                "q",
                 openapi.IN_QUERY,
-                description="Texto para buscar por nombre, apellido o servicio",
-                type=openapi.TYPE_STRING
+                description="Texto para buscar por nombre, apellido, username o servicio",
+                type=openapi.TYPE_STRING,
             )
         ]
     )
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def buscar(self, request):
-        q = request.query_params.get('q', None)
+        q = request.query_params.get("q", None)
         usuario_actual = request.user
-        resultados = []
 
         if not q:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         q_lower = q.lower()
+        nombres = q_lower.split()
 
-        # Averiguar si coincide con algún nombre de servicio
+        # Buscar coincidencias de servicios por nombre
         servicios_coincidentes = ProveedorServicio.objects.filter(
-            Q(servicio__nombreServicio__icontains=q_lower)
-        ).values_list('servicio__id', flat=True).distinct()
+            servicio__nombreServicio__icontains=q_lower
+        ).values_list("servicio__id", flat=True).distinct()
 
-        # Filtramos proveedores y excluimos bloqueados (mutuos)
-        queryset = ProveedorServicio.objects.filter(
-            (
-                Q(proveedor__username__icontains=q) |
-                Q(proveedor__first_name__icontains=q) |
-                Q(proveedor__last_name__icontains=q) |
-                Q(servicio__nombreServicio__icontains=q)
-            ) & ~Q(proveedor=usuario_actual)
+        # Query base excluyendo usuario actual y bloqueados
+        queryset = ProveedorServicio.objects.exclude(
+            proveedor=usuario_actual
         ).exclude(
-            Q(proveedor__in=usuario_actual.bloqueados.all()) |   # yo bloqueé
-            Q(proveedor__bloqueados=usuario_actual)              # me bloquearon
-        ).distinct()
+            Q(proveedor__in=usuario_actual.bloqueados.all())
+            | Q(proveedor__bloqueados=usuario_actual)
+        )
 
-        # Agrupar resultados
+        # Construir Q dinámico para nombre, apellido y username
+        q_filter = Q(proveedor__username__icontains=q_lower) | Q(servicio__nombreServicio__icontains=q_lower)
+
+        if len(nombres) == 1:
+            # Solo un token → puede ser nombre, apellido o username
+            q_filter |= Q(proveedor__first_name__icontains=nombres[0]) | Q(proveedor__last_name__icontains=nombres[0])
+        elif len(nombres) >= 2:
+            # Más de un token → buscar combinación first_name + last_name
+            q_filter |= Q(proveedor__first_name__icontains=nombres[0], proveedor__last_name__icontains=nombres[1])
+
+        queryset = queryset.filter(q_filter).distinct()
+
+        # Agrupar resultados por proveedor
         servicios_por_proveedor = {}
 
         for ps in queryset:
-            verificado = obtener_proveedor_servicio_por_usuario_y_servicio(ps.proveedor.id, ps.servicio.id)
+            verificado = obtener_proveedor_servicio_por_usuario_y_servicio(
+                ps.proveedor.id, ps.servicio.id
+            )
             if not verificado:
                 continue
 
             proveedor_id = ps.proveedor.id
 
-            # Si no existe, inicializamos la entrada
             if proveedor_id not in servicios_por_proveedor:
                 servicios_por_proveedor[proveedor_id] = {
-                    'proveedor': ps.proveedor,
-                    'servicios': []
+                    "proveedor": ps.proveedor,
+                    "servicios": [],
                 }
 
-            # Si buscó por nombre/apellido → agregamos todos los servicios
-            if ps.proveedor.first_name.lower().find(q_lower) != -1 or ps.proveedor.last_name.lower().find(q_lower) != -1:
-                servicios_por_proveedor[proveedor_id]['servicios'] = Servicio.objects.filter(
-                    proveedores_servicio__proveedor=ps.proveedor
-                ).distinct()
-            else:
-                # Si buscó por nombre de servicio → solo ese servicio
-                if ps.servicio.id in servicios_coincidentes:
-                    servicios_por_proveedor[proveedor_id]['servicios'].append(ps.servicio)
+            # Si buscó por username o nombre/apellido → traer todos los servicios del proveedor
+            if (
+                ps.proveedor.username.lower().find(q_lower) != -1
+                or ps.proveedor.first_name.lower().find(nombres[0]) != -1
+                or ps.proveedor.last_name.lower().find(nombres[0]) != -1
+            ):
+                servicios_por_proveedor[proveedor_id]["servicios"] = list(
+                    Servicio.objects.filter(
+                        proveedores_servicio__proveedor=ps.proveedor
+                    ).distinct()
+                )
+            # Si buscó por nombre de servicio → solo ese servicio
+            elif ps.servicio.id in servicios_coincidentes:
+                servicios_por_proveedor[proveedor_id]["servicios"].append(ps.servicio)
 
         if not servicios_por_proveedor:
             return Response(status=status.HTTP_204_NO_CONTENT)
 
+        # Preparar datos para el serializer
         datos_serializables = [
             {
-                'proveedor': entry['proveedor'],
-                'servicios': entry['servicios']
+                "proveedor": entry["proveedor"],
+                "servicios": entry["servicios"],
             }
             for entry in servicios_por_proveedor.values()
         ]
