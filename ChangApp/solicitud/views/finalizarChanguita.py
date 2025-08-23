@@ -47,7 +47,7 @@ class FinalizarChanguitaView(APIView):
                 f"El equipo de Changuitas"
                 )
             Notificacion.objects.create(
-                usuario_destino=solicitud.cliente,
+                usuario_destino=solicitud.proveedorServicio.proveedor,
                 notificacion_de_sistema=False,
                 mensaje=mensaje
             )
