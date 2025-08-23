@@ -44,7 +44,7 @@ class FinalizarChanguitaView(APIView):
                 f"Podés ingresar a la app para ver los detalles del trabajo. ⭐\n\n"
                 f"Gracias por brindar tus servicios a través de ChangApp.\n\n"
                 f"Saludos,\n"
-                f"El equipo de Changuitas"
+                f"El equipo de ChangApp"
                 )
             Notificacion.objects.create(
                 usuario_destino=solicitud.proveedorServicio.proveedor,

@@ -64,7 +64,7 @@ class IniciarChanguitaView(APIView):
                 f"desea contratarte para una changuita. 💼\n\n"
                 f"Por favor, ingresá a la app para aceptar o rechazar la solicitud.\n\n"
                 f"Saludos,\n"
-                f"El equipo de Changuitas"
+                f"El equipo de ChangApp"
             )
             Notificacion.objects.create(
                 usuario_destino=proveedor,

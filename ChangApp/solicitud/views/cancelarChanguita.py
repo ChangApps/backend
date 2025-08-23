@@ -45,7 +45,16 @@ class CancelarChanguitaView(APIView):
             Notificacion.objects.create(
                 usuario_destino=destino,
                 notificacion_de_sistema=False,
-                mensaje=f"{usuario_actual.username} ha cancelado la changuita."
+                mensaje=(
+                    f"👋 Hola {destino.first_name} {destino.last_name},\n\n"
+                    f"Lamentamos informarte que {usuario_actual.first_name} {usuario_actual.last_name} ha cancelado la changuita. 😕\n\n"
+                    f"📌 Motivo de la cancelación:\n"
+                    f"\"{motivo}\"\n\n"
+                    f"Te recomendamos estar atento a nuevas oportunidades en la plataforma.\n\n"
+                    f"🙏 Gracias por usar ChangApp. Si tenés alguna duda o problema, no dudes en contactarnos.\n\n"
+                    f"Saludos,\n"
+                    f"El equipo de ChangApp."
+                )
             )
 
             # Enviar email con motivo personalizado
@@ -58,9 +67,9 @@ class CancelarChanguitaView(APIView):
                     f"📌 Motivo de la cancelación:\n"
                     f"\"{motivo}\"\n\n"
                     f"Te recomendamos estar atento a nuevas oportunidades en la plataforma.\n\n"
-                    f"🙏 Gracias por usar Changuitas. Si tenés alguna duda o problema, no dudes en contactarnos.\n\n"
+                    f"🙏 Gracias por usar ChangApp. Si tenés alguna duda o problema, no dudes en contactarnos.\n\n"
                     f"Saludos,\n"
-                    f"El equipo de Changuitas"
+                    f"El equipo de ChangApp."
                 )
                 send_mail(
                     subject=asunto,
