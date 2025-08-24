@@ -50,7 +50,6 @@ class CancelarChanguitaView(APIView):
                     f"Lamentamos informarte que {usuario_actual.first_name} {usuario_actual.last_name} ha cancelado la changuita. 😕\n\n"
                     f"📌 Motivo de la cancelación:\n"
                     f"\"{motivo}\"\n\n"
-                    f"Te recomendamos estar atento a nuevas oportunidades en la plataforma.\n\n"
                     f"🙏 Gracias por usar ChangApp. Si tenés alguna duda o problema, no dudes en contactarnos.\n\n"
                     f"Saludos,\n"
                     f"El equipo de ChangApp."
